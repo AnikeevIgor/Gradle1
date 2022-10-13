@@ -1,39 +1,41 @@
 package com.example.gradle1.school.Service;
 
 import com.example.gradle1.school.Model.Faculty;
+
+import com.example.gradle1.school.repositories.FacultyRepo;
+
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
+import java.util.Collection;
+
 
 @Service
 public class FacultyService {
-    private final HashMap<Long, Faculty> faculties = new HashMap<>();
-    public long countFaculty = 0;
+    private final FacultyRepo facultyRepo;
 
-    public Faculty createFaculty(Faculty faculty){
-        faculty.setId(countFaculty++);
-        faculties.put(faculty.getId(),faculty);
-        return faculty;
+
+    public FacultyService(FacultyRepo facultyRepo) {
+        this.facultyRepo = facultyRepo;
     }
-    public Faculty findFaculty(long id) {
-        return faculties.get(id);
+
+    public Faculty createFaculty(Faculty faculty) {
+        return facultyRepo.save(faculty);
     }
+
+    public Faculty findFaculty(Long id) {
+        return facultyRepo.findById(id).get();
+    }
+
     public Faculty editFaculty(Faculty faculty) {
-        if (!faculties.containsKey(faculty)){
-            return null;
-        }
-        faculties.put(faculty.getId(),faculty);
-        return faculty;
-    }
-    public Faculty deleteFaculty(long id) {
-        return faculties.remove(id);
+        return facultyRepo.save(faculty);
     }
 
+    public void deleteFaculty(Long id) {
+        facultyRepo.deleteById(id);
+    }
 
-    public List<Faculty> filterFaculty(String color){
-        return new ArrayList<>(faculties.values()).stream().filter(faculty ->faculty.getColor().equals(color) ).toList();
-        //.orElseThrow(() -> new EmployeeNotFoundException("не найден"));
+    public Collection<Faculty> getAllFaculty() {
+        return facultyRepo.findAll();
     }
 }

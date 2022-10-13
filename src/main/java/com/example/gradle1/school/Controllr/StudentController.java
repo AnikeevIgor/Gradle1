@@ -3,10 +3,12 @@ package com.example.gradle1.school.Controllr;
 
 import com.example.gradle1.school.Model.Student;
 import com.example.gradle1.school.Service.StudentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collection;
+
 
 @RestController
 @RequestMapping("student")
@@ -34,16 +36,18 @@ public class StudentController {
     public ResponseEntity<Student> editStudent(@RequestBody Student student){
         Student student1 = studentService.editStudent(student);
         if(student1==null){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(student1);
     }
     @DeleteMapping("{id}")
-    public Student deleteStudent(@PathVariable Long id){
-        return studentService.deleteStudent(id);
+    public ResponseEntity deleteStudent(@PathVariable Long id){
+        studentService.deleteStudent(id);
+        return ResponseEntity.ok().build();
     }
-    @GetMapping("{age}")
-    public List<Student> filterStudents(@PathVariable int age){
-        return studentService.filterStudents(age);
+
+    @GetMapping
+    public ResponseEntity<Collection<Student>> getAllStudents(){
+        return  ResponseEntity.ok(studentService.getAllStudents());
     }
 }

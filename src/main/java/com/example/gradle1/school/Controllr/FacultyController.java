@@ -2,10 +2,13 @@ package com.example.gradle1.school.Controllr;
 
 
 import com.example.gradle1.school.Model.Faculty;
+import com.example.gradle1.school.Model.Student;
 import com.example.gradle1.school.Service.FacultyService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("faculty")
@@ -18,8 +21,12 @@ public class FacultyController {
     }
 
     @GetMapping("{id}")
-    public Faculty getFacultyInfo(@PathVariable Long id) {
-        return facultyService.findFaculty(id);
+    public ResponseEntity<Faculty> getFacultyInfo(@PathVariable Long id){
+        Faculty faculty = facultyService.findFaculty(id);
+        if(faculty == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(faculty);
     }
 
     @PostMapping
@@ -28,17 +35,21 @@ public class FacultyController {
     }
 
     @PutMapping
-    public Faculty editFaculty(@RequestBody Faculty faculty) {
-        return facultyService.editFaculty(faculty);
+    public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
+        Faculty faculty1 = facultyService.editFaculty(faculty);
+        if(faculty1==null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(faculty1);
     }
 
     @DeleteMapping("{id}")
-    public Faculty deleteFaculty(@PathVariable Long id) {
-        return facultyService.deleteFaculty(id);
+    public ResponseEntity deleteFaculty(@PathVariable Long id) {
+         facultyService.deleteFaculty(id);
+         return ResponseEntity.ok().build();
     }
-
-    @GetMapping("{color}")
-    public List<Faculty> filterFaculty(@PathVariable String color) {
-        return facultyService.filterFaculty(color);
+    @GetMapping
+    public ResponseEntity<Collection<Faculty>> getAllFaculty(){
+        return  ResponseEntity.ok(facultyService.getAllFaculty());
     }
 }
